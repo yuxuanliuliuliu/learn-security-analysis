@@ -1,8 +1,7 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import rateLimit from 'express-rate-limit';
 
 import * as Home from './pages/home';
 import * as Books from './pages/books';
@@ -11,8 +10,12 @@ import * as Authors from './pages/authors';
 import * as BookDetails from './pages/book_details';
 import * as CreateBook from './pages/create_book';
 
+import { validateIdMiddleware, RequestWithSanitizedId } from './sanitizers/idSanitizer';
+import { validateBookDetailsMiddleware, RequestWithSanitizedBookDetails } from './sanitizers/bookSanitizer';
+import { appRateLimiter } from './sanitizers/rateLimiter';
+
 const app = express();
-const port = 8000;
+const port = 8000; 
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -27,12 +30,10 @@ db.on('connected', () => {
   console.log('Connected to database');
 });
 
+
+
 app.use(cors());
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later."
-}));
+app.use(appRateLimiter);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -57,12 +58,15 @@ app.get('/authors', (_, res: Response) => {
   Authors.showAllAuthors(res);
 });
 
-app.get('/book_dtls', (req: Request, res: Response) => {
-  BookDetails.showBookDtls(res, req.query.id as string);
+app.get('/book_dtls', validateIdMiddleware, (req: RequestWithSanitizedId, res: Response) => {
+  if(req.sanitizedId)
+    BookDetails.showBookDtls(res, req.sanitizedId);
+  else 
+    res.status(404).send('Invalid ID');
 });
 
-app.post('/newbook', (req: Request, res: Response) => {
-  const { familyName, firstName, genreName, bookTitle } = req.body;
+app.post('/newbook', validateBookDetailsMiddleware, (req: RequestWithSanitizedBookDetails, res: Response) => {
+  const { familyName, firstName, genreName, bookTitle } = req;
   if (familyName && firstName && genreName && bookTitle) {
     CreateBook.new_book(res, familyName, firstName, genreName, bookTitle).catch(err => {
       res.send('Failed to create new book ' + err);
