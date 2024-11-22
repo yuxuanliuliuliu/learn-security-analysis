@@ -12,7 +12,7 @@ export const validateIdMiddleware = (req: RequestWithSanitizedId, res: Response,
       return res.status(400).send("Invalid ID: ID must be a string.");
     }
     // Validate length and alphanumeric characters
-    const isValidId = /^[a-fA-F0-9]{24}$/.test(id);
+    const isValidId = /^[a-zA-Z0-9]{24}$/.test(id);
     if (!isValidId) {
       return res.status(400).send("Invalid ID: ID must be a 24-character alphanumeric string.");
     }

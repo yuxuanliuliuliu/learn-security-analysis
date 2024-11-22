@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
@@ -64,10 +64,11 @@ app.get('/authors', (_, res: Response) => {
 });
 
 app.get('/book_dtls', validateIdMiddleware, (req: RequestWithSanitizedId, res: Response) => {
-  if(req.sanitizedId)
-    BookDetails.showBookDtls(res, req.sanitizedId);
-  else 
-    res.status(404).send('Invalid ID');
+  const id = req.sanitizedId;
+  if(id)
+    BookDetails.showBookDtls(res, id);
+  else
+    res.status(400).send("Invalid ID: ID must be a string.");
 });
 
 app.post('/newbook', validateBookDetailsMiddleware, (req: RequestWithSanitizedBookDetails, res: Response) => {
