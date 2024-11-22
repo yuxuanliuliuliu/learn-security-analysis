@@ -32,7 +32,12 @@ db.on('connected', () => {
 
 
 
-app.use(cors());
+// CORS policy: Allow requests from http://localhost:3000
+app.use(cors(
+  {
+    origin: 'http://localhost:3000'
+  }
+));
 app.use(appRateLimiter);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
