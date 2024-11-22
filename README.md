@@ -52,4 +52,4 @@ CodeQL comes with a set of built-in queries but developers can extend them with 
 
 ## For You To Do
 
-Fork this repository. Run CodeQL on the source code. On analyzing the generated report, you will find NoSQL injection vulnerabilties in your code. Fix the vulnerabilties and push to a new branch. Submit your forked repo URL and the relevant banch name in the Canvas listing.
+Fork this repository. Run CodeQL on the source code. On analyzing the generated report, you will find NoSQL injection vulnerabilties in your code. Fix the vulnerabilties and push to a new branch.
