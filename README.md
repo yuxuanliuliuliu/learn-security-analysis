@@ -30,7 +30,7 @@ CodeQL comes with a set of built-in queries but developers can extend them with 
 
 3. Verify the installation by running the following command:
 
-    `$ <extraction-root>/codeql/codelql resolve qlpacks`
+    `$ <extraction-root>/codeql/codelql resolve packs`
 
     If the installation was succesful, in the output for the above command you should be able to see the path to the ql packs for javascript. The location should be within the extracted CodeQL CLI bundle in the directory `<extraction-root>`. If the CodeQL CLI is unable to locate the qlpacks for the expected languages, check that you downloaded the CodeQL bundle and not a standalone copy of the CodeQL CLI.
 
