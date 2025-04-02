@@ -1,6 +1,7 @@
 import Book  from '../models/book';
 import BookInstance, { IBookInstance }  from '../models/bookinstance';
 import express from 'express';
+import sanitizeHtml from 'sanitize-html';
 
 const router = express.Router();
 
@@ -13,8 +14,10 @@ const router = express.Router();
  * @returns 404 - if the book is not found
  * @returns 500 - if there is an error in the database
  */
+
+
 router.get('/', async (req, res) => {
-  const id = req.query.id as string;
+  const id = sanitizeHtml(req.query.id) as string
   try {
     const [book, copies] = await Promise.all([
       Book.getBook(id),
@@ -27,9 +30,9 @@ router.get('/', async (req, res) => {
     }
 
     res.send({
-      title: book.title,
-      author: book.author.name,
-      copies: copies
+      title: sanitizeHtml(book.title),
+      author: sanitizeHtml(book.author.name),
+      copies: sanitizeHtml(copies)
     });
   } catch (err) {
     console.error('Error fetching book:', err);
